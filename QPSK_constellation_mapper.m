@@ -1,46 +1,52 @@
-function [xR, xI] = QPSK_constellation_mapper( xp )
+function [xR, xI] = QPSK_constellation_mapper( dn )
 
 % Input:  row vector
-% Output: tow row vector
+% Output: two row vector
 
-% change a row vector input   [ 1 1 0 0 0 0 1 1]
-% to                          [ 1 1
-%                               0 0 
-%                               0 0
-%                               1 1]
-if mod(length(xp),2) ~= 0
-    xp = xp(1:length(xp)-1);
+% change row vector input   [ xp[1] xp[2] xp[3] ... xp[N] ]
+%
+% to                        [ xp[1] xp[2];
+%                             xp[3] xp[4];
+%                               .     .
+%                              ...  xp[N]]
+if mod(length(dn),2) ~= 0
+    dn = dn(1:length(dn)-1);
 end
+dn_matrix = reshape(dn,2,[])';
 
-m = reshape(xp,2,[])';
+x = zeros(size(dn_matrix));
 
-
-% here didn't handle NaN
-
-d = zeros(size(m));
-
+% because QPSK send two bit in a time slot
+% we normalize the energy in every time to one
+% so the amptitude in each dimension is 1/sqrt(2)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% another problem
+% should amptitude normalize with L?
+% total energy in one transmission to be the same
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 s = 1/sqrt(2);
-for i = 1:size(m,1)
-    if isequal(m(i,:),[1,1])
-        d(i,1) = s;
-        d(i,2) = s;
 
-    elseif isequal(m(i,:),[0,1])
-        d(i,1) = -s;
-        d(i,2) = s;
+for i = 1:size(dn_matrix,1)
+    if isequal(dn_matrix(i,:),[1,1])
+        x(i,1) = s;
+        x(i,2) = s;
 
-    elseif isequal(m(i,:),[1,0])
-        d(i,1) = s;
-        d(i,2) = -s;
+    elseif isequal(dn_matrix(i,:),[0,1])
+        x(i,1) = -s;
+        x(i,2) = s;
+
+    elseif isequal(dn_matrix(i,:),[1,0])
+        x(i,1) = s;
+        x(i,2) = -s;
 
     else
-        d(i,1) = -s;
-        d(i,2) = -s;
+        x(i,1) = -s;
+        x(i,2) = -s;
     end
 end
 
-xR = d(:,1)';
-xI = d(:,2)';
+xR = x(:,1)';
+xI = x(:,2)';
 
 end
 

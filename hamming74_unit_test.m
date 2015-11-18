@@ -50,7 +50,7 @@ yp = mergesignal(ypR, ypI);
 dnhat = QPSK_constellation_demapper(yp);
 bnhat = Hamming74_decoder(dnhat);
 
-%bnhat usually longer than bn, so modify
+% bnhat usually longer than bn, so modify
 % so now it may shorter (modify on 1108)
 bn_compare = bn(1:length(bnhat));
 

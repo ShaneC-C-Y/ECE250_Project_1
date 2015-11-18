@@ -1,9 +1,12 @@
 function dn = repetition_encoder(bn, L)
+% z = [ -----bn-----
+%       -----bn-----
+%             .
+%             .
+%       -----bn------]
+% z have L rows
 
-z = bn;
-for i = 1:L-1
-    z = [z; bn];
-end
+z = repmat(bn,L,1);
 dn = z(:)';
 
 end

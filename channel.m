@@ -1,6 +1,6 @@
  function [ y,h ] = channel(x1, sigma_w, N)
 
-% Input(x1):        row vector, 1 by N*Ns, complex
+% Input(x1):        row vector, 1 by N*Ns
 % Input(sigma, N):  parameter
 % Output(y):        row vector, 1 bu N*Ns, complex
 % OUtput(h):        row vector, 1 by Ns
@@ -33,11 +33,8 @@ w = sigma_w.*exp(1j*2*pi*rand(N,Ns));% complex
 h_matrix = diag(h);
 y = x*h_matrix + w;
 
-% sufficient statistic is Re{y}
-y = real(y);
-
 % make y and h to a row vector to be output
-y = y(:)';
+y = y(:).';
 h = torowvector(h);
 
 end
