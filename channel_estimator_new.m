@@ -19,7 +19,5 @@ y_est = y*h_invmatrix;
 
 % make a row vector to be output
 y_est = y_est(:).';
-
-
 end
 

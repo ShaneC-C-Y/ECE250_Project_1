@@ -34,7 +34,6 @@ h_matrix = diag(h);
 y = x*h_matrix + w;
 
 % sufficient statistic is Re{y}
-
 y = real(y);
 
 % make y and h to a row vector to be output
