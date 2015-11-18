@@ -1,64 +1,47 @@
-function [bnhat] = Hamming74_decoder( rn )
+function [bnhat] = Hamming74_decoder(dnhat)
 
 n = 7;
 
-len = length(rn);
+% cut off extra bit making vector can be a 7 by N~ matrix
+% dnhat = [ dh[1] ...   ...
+%            .     .     .
+%           dh[7] ... dh[7*N~] ]
+len = length(dnhat);
 mo = mod(len,n);
 if mo ~=0
-    rn = rn(1:len-mo);
+    dnhat = dnhat(1:len-mo);
 end
-% need colume vector to multiply the matrix H
-% rn3 is a row number n (length n codeword) matrix
-rn3 = reshape(rn,n,[]);
+dnhat_matrix = reshape(dnhat,n,[]);
 
-% z is a 3 row matrix with Num+ columns
-z = check(rn3);
+% parity check matrix
+% very inportant to check the version of coding matrix
+%https://en.wikipedia.org/wiki/Hamming(7,4)#Decoding
+H = [ 1 0 1 0 1 0 1;
+      0 1 1 0 0 1 1;
+      0 0 0 1 1 1 1];
+  
+% err_matrix is 3 by N~ matrix
+err_matrix = mod(H*dnhat_matrix,2);
 
-% %% get the error before correction
-% pe = cal_error(z);
+% e_pos tell us which bit is wrong (if only 1 bit error)
+% it is a 1 by N~ vector
+e_pos = err_matrix(1,:) + 2.*err_matrix(2,:) + 4.*err_matrix(3,:);
 
-%% error correction
-% suppose 1 bit error
-e_pos = z(1,:) + 2.*z(2,:) + 4.*z(3,:);  % find which bit error)
-
-rn3_correct = rn3;
-for i = 1:length(e_pos)    % how many should go through
+% find which bit error
+r_correct = dnhat_matrix;
+for i = 1:length(e_pos)    % length(e_pos) = N~
     if e_pos(i) > 0
-        rn3_correct(e_pos(i),i) = 1 - rn3(e_pos(i),i);
+        r_correct(e_pos(i),i) = 1 - dnhat_matrix(e_pos(i),i);
     end
 end
 
-% %% check codeword after correction
-% % calculate corrected codeword error, 
-% % it should be 0 no matter how many bits error
-% z_correct = check(rn3_correct);
-% pe2 = cal_error(z_correct);
+% dnhat_correct here is a 4 by N~ matrix
+R = [ 0 0 1 0 0 0 0;
+      0 0 0 0 1 0 0;
+      0 0 0 0 0 1 0;
+      0 0 0 0 0 0 1];
+dnhat_correct = R*r_correct;
 
-%% output
 % output the result of decoder
-bnhat2 = rn3_correct(1:4,:);
-bnhat = bnhat2(:)';
-
-end
-
-%% helper function
-function z = check(r)
-% parity check matrix
-% very inportant to check the version of coding matrix
-% https://en.wikipedia.org/wiki/Hamming_code
-H = [ 1 1 0 1 1 0 0;
-      1 0 1 1 0 1 0;
-      0 1 1 1 0 0 1];
-  
-z1 = H*r;        
-z = mod(z1,2);
-end
-
-function pe_f = cal_error(z_f)
-% calculate the prob. error in codeword
-s = sum(z_f);
-
-e = length(find(s~=0));
-
-pe_f = e/length(s);
+bnhat = dnhat_correct(:)';
 end

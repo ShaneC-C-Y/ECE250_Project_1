@@ -1,15 +1,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      11/06/2015            %
+% modify on 11/17 night      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-% Ts = 1;
-Num = 800;
+Num = 200;      % 100 will error!!!
 
-% should n = L?
-L = 3;        % time diversity, still have bug when L = 1
-              % detection may have problem on L>2
-N = 25;        % Tc/Ts
+fc = 1.8e+09;
+W = 10e+03;
+Ts = 1/W;
+
+Tc = 2.5e-03;
+
+% n = L ot n < L
+% in (n,k) = (7,4) Hamming code
+% we should use L >= 7
+L = 7;          % time diversity, still have bug when L = 1
+N = Tc/Ts;      % amount of symbol in one Tc
 
 snr = 5;
 sigma_w = sqrt(1/snr);  % sigma_w^2 = 1/SNR 
@@ -26,10 +33,10 @@ xI = interleaver(xpI, L, N);
 
 % x = gotocomplex(xR, xI);
 
-[y_nonestiR, hP] = channel_new(xR, sigma_w, N);
-[y_nonestiI, hI] = channel_new(xI, sigma_w, N);
+[y_nonestiR, hP] = channel(xR, sigma_w, N);
+[y_nonestiI, hI] = channel(xI, sigma_w, N);
 
-% yR, yI here are real
+% yR, yI here is real(with noise)
 yR = channel_estimator_new(y_nonestiR, hP, N);
 yI = channel_estimator_new(y_nonestiI, hI, N);
 
