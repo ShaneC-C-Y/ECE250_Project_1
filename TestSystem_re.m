@@ -9,7 +9,8 @@ n_simu = 10;
 SNRrange = [6 15];
 SNR = linspace(SNRrange(1),SNRrange(2),n_simu);
 
-prob_error = zeros(5,10);
+pe_hamming = zeros(1,10);
+pe_repetition = zeros(1,10);
 prob_de = zeros(1,10);
 pe_theoretical = zeros(1,10);
 
@@ -19,7 +20,7 @@ l = 2;
         sigma_w = sqrt(1/snr2);  % sigma_w^2 = 1/SNR 
         
 %         prob_error(j,i) = pe;
-        [~, prob_de(i)] = repetition_unit_test(snr2,Num);
+        [pe_hamming, pe_repetition, prob_de(i)] = System(snr2,Num);
         pe_theoretical(i) = 4*power(snr2,-l);
         
 
