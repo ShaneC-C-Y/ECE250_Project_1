@@ -30,25 +30,32 @@ pe_symbol = zeros(1,n_simulation);
 pe_theoretical_symbol = zeros(1, n_simulation);
 pe_bit = zeros(1,n_simulation);
 pe_theoretical_bit = zeros(1,n_simulation);
+n_total_bit = zeros(1, n_simulation);
 
 % L should satsify 
 %   L >= n, when using length n codeword
 % Hamming74:        n = 7
+% L = 7;
+% n = 7;
+% k = 4;
+
 % Repetition(n):    n = n
 L = 2;
 n = 2;
+k = 1;
+
     for i = 1 : n_simulation
 %         type = 'hamming74';
         type = 'repetition';
         %%%%%%%%%%
         % take out Num
         %%%%%%%%%%%
-        [pe_symbol(i), pe_bit(i)] = System(SNR(i), L, n, type);
+        [pe_symbol(i), pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
 %         pe_theoretical_symbol(i) = ?
         % for hamming74 at high SNR region
-%         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
+        pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
         % for repetition n=2
-        pe_theoretical_symbol(i) = 4/SNR(i)^L;
+%         pe_theoretical_symbol(i) = 4/SNR(i)^L;
     end
 
 h1 = plot(SNR,pe_symbol, 'o', SNR,pe_bit, '*', SNR,pe_theoretical_symbol);
@@ -65,7 +72,8 @@ ylabel('probability of error');
 % if we want to know how may Num we run
 % System should tell us at output
 %%%%%%%%%%%%%
-title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d', n, 0));
+title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d',...
+    n, n_total_bit(n_simulation)));
 
 % figure(2);
 % h2 = plot(SNR,pe_theoretical);

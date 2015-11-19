@@ -1,20 +1,14 @@
-function xp = interleaver( dn, time_diversity, Ns)
+function xp = interleaver( dn, L, N)
 
-% Input: row vector
-% Output row vector, size the same
-N = Ns;
-L = time_diversity;
+% Input(dn):    row vector, length N*L
+% Output:       row vector, size the same
+assert(length(dn) == N*L);
 
-% make every L*N bits in a row
-xp1 = length_handle(dn, N*L);
-
-y = reshape(xp1,L*N,[])';
-
-xp = zeros(size(y));               % output is the same size
+xp = zeros(size(dn));
 
 for i = 1:L
     for j = 1:N
-        xp(:,(i-1)*N+j) = y(:,i+ (j-1)*L);
+        xp((i-1)*N+j) = dn(i+ (j-1)*L);
     end
 end
 

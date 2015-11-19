@@ -1,4 +1,4 @@
-function [pe_symbol, pe_bit] = System(snr, L, n, type)
+function [pe_symbol, pe_bit, n_total_bit] = System(snr, L, n, k, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time diversity system                                         %
 % create:       11/06/2015                                      %
@@ -16,7 +16,6 @@ function [pe_symbol, pe_bit] = System(snr, L, n, type)
 % pe_bit is computed by comparing bn and dnhat (Num*n bits)     %
 %   (1) it works only on repetition coding                      %
 %                                                               %
-%                                                               %
 % note:                                                         %
 %   Real and Imag part on different                             %
 %   path, so there will be two channel                          %
@@ -24,15 +23,16 @@ function [pe_symbol, pe_bit] = System(snr, L, n, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % fc = 1.8e+09;
-W = 10e+03;
-Ts = 1/W;
-
-Tc = 3e-03;
+% W = 10e+03;
+% Ts = 1/W;
+% 
+% Tc = 4.2e-03;
 
 % amount of symbol in one Tc
-% set an even number, 30
-% because QPSK need to deal with even number
-N = Tc/Ts;      
+% set a number dividable by 2 and 7, choosing 42
+% because QPSK need to deal with even number and hamming74 code
+% with divide sequence by 7
+N = 42;      
 
 % sigma_w^2 = 1/SNR 
 sigma_w = sqrt(1/snr);
@@ -44,9 +44,20 @@ sigma_w = sqrt(1/snr);
 % because QPSK need even            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-error_count = 0;
-while error_count <= 100
-    bn = bit_generator(N*L);
+error_count_symbol = 0;
+error_count_bit = 0;
+n_run = 0;
+while error_count_symbol <= 100
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % genertor                                          %
+    % everytime we need a N*L bit in interleaver, so    %
+    % we should generate 2*N*L / (n/k) bits             %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Num = 2*N*L*k/n;
+    if mod(Num,1) ~= 0
+        warning('Num has problem')
+    end
+    bn = bit_generator(Num);
 
     [xR, xI] = Transmitter(bn, L, N, n, type);
 
@@ -55,16 +66,23 @@ while error_count <= 100
 
     [bnhat, dnhat] = Receiver(y_R, y_I, h_R, h_I, L, N, n, type);
 
-    % who can see both original bit and receiver can tell the probabilty of
-    % error (symbol error)
-    %%%%%%%%%%%%
-    %should be sum????? not length(find((bnhat - bn)~=0))
-    %%%%%%%%%%%%%%
-    pe_symbol = sum(find((bnhat - bn)~=0)) / length(bnhat);
-
+    error_count_symbol = error_count_symbol + length(find(bnhat ~= bn));
+    n_run = n_run + 1;
+    
     % detection in bit error
-    pe_bit = detection(dnhat, L, bn);
+    error_count_bit = error_count_bit + detection(dnhat, n, bn);
 end
+% who can see both original bit and receiver can tell the probabilty of
+% error (symbol error)
+n_total_bit = n_run*N*L;
+pe_symbol = error_count_symbol / n_total_bit;
+pe_bit = error_count_bit / (n_total_bit*n);
+
+
+%%%%%%%%%%%%%%%
+% fix it later
+%%%%%%%%%%%%%%%
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % repetition                %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

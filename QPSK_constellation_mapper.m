@@ -1,16 +1,18 @@
 function [xR, xI] = QPSK_constellation_mapper( dn )
 
-% Input:  row vector
-% Output: two row vector
+% Input:            row vector, length 2*N*L*(n/k)
+% Output(xR, xI):   row vector, length N*L*(n/k)
 
-% change row vector input   [ xp[1] xp[2] xp[3] ... xp[N] ]
+% change row vector input   [ xp[1] xp[2] xp[3] ... xp[2*N*L] ]
 %
 % to                        [ xp[1] xp[2];
 %                             xp[3] xp[4];
 %                               .     .
-%                              ...  xp[N]]
+%                              ...  xp[2*N*L]]
+% two length N*L column
 if mod(length(dn),2) ~= 0
     dn = dn(1:length(dn)-1);
+    warning('legnth have problem in mapper')
 end
 dn_matrix = reshape(dn,2,[])';
 

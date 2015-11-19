@@ -1,23 +1,18 @@
-function rn = deinterleaver( yp, time_diversity, Ns )
+function yp = deinterleaver( y_afterfilter, L, N )
 
-% Input: row vector  [ 1 0 0 1 1 | 1 0 0 1 1]
-% output should be like [ 1 1 0 0 0 0 1 1 1 1 ]
-L = time_diversity;
-N = Ns;
+% Input(yp):    row vector, length N*L
+% Output:       row vector, size the same
+assert(length(y_afterfilter) == N*L);
 
-temp = length_handle(yp,L*N);
-
-r = reshape(temp,L*N,[])';
-
-rn = zeros(size(r));
+yp = zeros(size(y_afterfilter));
 
 for i = 1:L
     for j = 1:N
-        rn(:,i+ (j-1)*L) = r(:,(i-1)*N+j);
+        yp(i+ (j-1)*L) = y_afterfilter((i-1)*N+j);
     end
 end
 
-rn = torowvector(rn);
+yp = torowvector(yp);
 
 end
 
