@@ -17,7 +17,10 @@
 % Note:                                                     %
 %   the input variables to System are for the tests above   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Num = 1e+05;
+
+% maybe we should not specify Num here
+% just use while until there is enough error, i.e. 100
+% Num = 1e+05;
 
 n_simulation = 10;
 SNRrange = [10 100];
@@ -37,7 +40,10 @@ n = 2;
     for i = 1 : n_simulation
 %         type = 'hamming74';
         type = 'repetition';
-        [pe_symbol(i), pe_bit(i)] = System(SNR(i), Num, L, n, type);
+        %%%%%%%%%%
+        % take out Num
+        %%%%%%%%%%%
+        [pe_symbol(i), pe_bit(i)] = System(SNR(i), L, n, type);
 %         pe_theoretical_symbol(i) = ?
         % for hamming74 at high SNR region
 %         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
@@ -54,7 +60,12 @@ set(h1, 'linewidth', 2);
 % legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
 xlabel('SNR');
 ylabel('probability of error');
-title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d', n, Num));
+
+%%%%%%%%%%%%%%
+% if we want to know how may Num we run
+% System should tell us at output
+%%%%%%%%%%%%%
+title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d', n, 0));
 
 % figure(2);
 % h2 = plot(SNR,pe_theoretical);

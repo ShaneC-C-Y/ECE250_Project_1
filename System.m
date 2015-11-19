@@ -1,4 +1,4 @@
-function [pe_symbol, pe_bit] = System(snr, Num, L, n, type)
+function [pe_symbol, pe_bit] = System(snr, L, n, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time diversity system                                         %
 % create:       11/06/2015                                      %
@@ -27,34 +27,44 @@ function [pe_symbol, pe_bit] = System(snr, Num, L, n, type)
 W = 10e+03;
 Ts = 1/W;
 
-Tc = 2.5e-03;
+Tc = 3e-03;
 
 % amount of symbol in one Tc
+% set an even number, 30
+% because QPSK need to deal with even number
 N = Tc/Ts;      
 
 % sigma_w^2 = 1/SNR 
 sigma_w = sqrt(1/snr);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% genertor                  %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bn = bit_generator(Num);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% genertor                          %
+% everytime generate one set of bit %
+% enough for N*L and should be even %
+% because QPSK need even            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[xR, xI] = Transmitter(bn, L, N, n, type);
+error_count = 0;
+while error_count <= 100
+    bn = bit_generator(N*L);
 
-[y_R, h_R] = channel(xR, sigma_w, N);
-[y_I, h_I] = channel(xI, sigma_w, N);
+    [xR, xI] = Transmitter(bn, L, N, n, type);
 
-[bnhat, dnhat] = Receiver(y_R, y_I, h_R, h_I, L, N, n, type);
+    [y_R, h_R] = channel(xR, sigma_w, N);
+    [y_I, h_I] = channel(xI, sigma_w, N);
 
-% who can see both original bit and receiver can tell the probabilty of
-% error (symbol error)
-bn_compare = bn(1:length(bnhat));
-pe_symbol = length(find((bnhat - bn_compare)~=0)) / length(bnhat);
+    [bnhat, dnhat] = Receiver(y_R, y_I, h_R, h_I, L, N, n, type);
 
-% detection in bit error
-pe_bit = detection(dnhat, L, bn);
+    % who can see both original bit and receiver can tell the probabilty of
+    % error (symbol error)
+    %%%%%%%%%%%%
+    %should be sum????? not length(find((bnhat - bn)~=0))
+    %%%%%%%%%%%%%%
+    pe_symbol = sum(find((bnhat - bn)~=0)) / length(bnhat);
 
+    % detection in bit error
+    pe_bit = detection(dnhat, L, bn);
+end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % repetition                %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
