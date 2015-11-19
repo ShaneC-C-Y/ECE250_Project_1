@@ -1,9 +1,9 @@
-function [xR, xI] = Transmitter(bn, L, N)
+function [xR, xI] = Transmitter(bn, L, N, n, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % take input sequence bn        %
 % and output signal xR xI       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dn = Hamming74_encoder(bn);
+dn = Encoder(bn, n, type);
 
 % xpR, xpI are real
 [xpR, xpI] = QPSK_constellation_mapper(dn);

@@ -1,4 +1,4 @@
-function [ bnhat ] = Receiver( y_R, y_I, h_R, h_I, L, N)
+function [bnhat, dnhat] = Receiver( y_R, y_I, h_R, h_I, L, N, n, type)
 %%%%%%%%%%%%%%
 % re
 %%%%%%%%%%%%%%%
@@ -13,7 +13,7 @@ ypI = deinterleaver(y_afterfilterI, L, N);
 yp = mergesignal(ypR, ypI);
 
 dnhat = QPSK_constellation_demapper(yp);
-bnhat = Hamming74_decoder(dnhat);
 
+bnhat = Decoder(dnhat, n, type);
 end
 
