@@ -1,21 +1,33 @@
-function pe = detection(rn, L, N)
+function pe = detection(dnhat, L, bn)
+% detection here should consider about bit error
+% the number of total bit is Num*L
+% so we need to know bn here
+% Input(dnhat):     row vector, 1 by Num*L
+% Input(bn):        row vector, 1 by Num
 
-rn = length_handle(rn, L);
+% make dnhat to be L by Num matrix
+% dnhat = [dn~[1] ...    ...
+%          dn~[2] ...    ...
+%            .     .      .
+%          dn~[L] ... dn~[L*Num] ]
+% bn =    [bn[1]  ...   bn[Num]  ]
+dnhat = length_handle(dnhat, L);
+dnhat = reshape(dnhat,L,[]);
 
-m = reshape(rn,L,[]);
-len = length(m);
-Nd = len-N;
-m = m(:,1:Nd);          % delete several terms which may error
+% check the length, make it comparable
+Num = min(length(dnhat), length(bn));
+dnhat = dnhat(:,1:Num);
+bn = bn(1:Num);
 
-min = len;
-for i = 1:L-1
-    for j = i+1:L
-        r = m(i,:) ~=  m(j,:);
-        if sum(r)< min
-            min = sum(r);
-        end
-    end
-end
-pe = min/len;
+% bn_matrix = [ -----bn-----
+%               -----bn-----
+%                     .
+%               -----bn-----]
+bn_matrix = repmat(bn,L,1);
+
+err = bn_matrix ~= dnhat;
+error_count = sum(sum(err));
+
+pe = error_count/L/Num;
 end
 

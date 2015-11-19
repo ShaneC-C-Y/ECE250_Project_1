@@ -39,8 +39,8 @@ xI = interleaver(xpI, L, N);
 [y_nonestiI, hI] = channel(xI, sigma_w, N);
 
 % yR, yI here is real(with noise)
-yR = channel_estimator(y_nonestiR, hP, N);
-yI = channel_estimator(y_nonestiI, hI, N);
+yR = matched_filter(y_nonestiR, hP, L, N);
+yI = matched_filter(y_nonestiI, hI, L, N);
 
 ypR = deinterleaver(yR, L, N);
 ypI = deinterleaver(yI, L, N);
