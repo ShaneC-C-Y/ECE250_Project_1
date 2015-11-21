@@ -1,11 +1,8 @@
-function [ yp ] = v2_backtoreal( yp_temp )
-% decompose complex signal to real signal
-% Input(yp_temp):            row vector, 1 by (7/4)Num
-% Output(yp):   row vector, double size
-yp_tempR = real(yp_temp);
-yp_tempI = imag(yp_temp);
-
-yp_temp = [yp_tempR; yp_tempI];
-yp = yp_temp(:)';
+function [ y_afterfilterR, y_afterfilterI ] = v2_backtoreal( y_afterfilter )
+% decompose complex signal to two real signal
+% Input(yp_temp): 
+% Output(yp):  
+y_afterfilterR = real(y_afterfilter);
+y_afterfilterI = imag(y_afterfilter);
 end
 

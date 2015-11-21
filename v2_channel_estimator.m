@@ -1,26 +1,34 @@
-function [ y_est ] = v2_channel_estimator(y, h, N)
-% matching filter
-% Input(y):         row vector, 1 by N*Ns, complex
+function [ y_afterfilter ] = v2_channel_estimator(y, h, N)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% implement matched filter  %
+% for only one path         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Input(y):         row vector, 1 by N*L, complex
 % Input(N):         parameter
-% Input(h):         row vector, 1 bu Ns, complex
-% OUtput(y_est):    row vector, 1 by N*Ns, complex
+% Input(h):         row vector, 1 bu L, complex
+% OUtput:           row vector, 1 by N*L, "complex"
 
-% y = [y[1] y[1+N] ...   h_invmatrix = [h_1  0  0 ...
-%      y[2] y[2+N] ...                   0  h_2 0 ...
-%       .      .    .                    .   .  .  .
-%      y[N] y[N+N] ...]                  0   0  0 h_Ns]
+L = length(h);
+assert( length(y) == N*L, 'lenght in matched filter is %d, not %d',...
+    length(y), N*L );
 
+% y = [y[1] y[1+N] ...        h_star = [h_1*  0   0 ...
+%      y[2] y[2+N] ...                   0   h_2* 0 ...
+%       .      .    .                    .    .   .  .
+%      y[N] y[N+N] ...]                  0    0   0 h_L*]
+
+% define h_norm as sqrt(|h_1|^2   + ... + |h_L|^2)
+% and h_factor is h_star time a scalar (1/h_norm)
 y = reshape(y, N, []);
+h_norm = sqrt(sum(abs(h)));
+
+h_factor = diag(conj(h)./h_norm);
 
 % y -> (h*/|h|)y
-h_hat = conj(h)./abs(h);
-h_invmatrix = diag(h_hat);
-y_est = y*h_invmatrix;
-
-% infomation in both real and imag part
-% so here we don't take real
+y_afterfilter = y*h_factor;
 
 % make a row vector to be output
-y_est = y_est(:).';
+y_afterfilter = y_afterfilter(:).';
 end
 

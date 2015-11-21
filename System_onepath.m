@@ -35,16 +35,17 @@ N = 42;
 error_count_symbol = 0;
 error_count_bit = 0;
 n_run = 0;
+
+% put here because the error rate caculator outside while loop need
+Num = 2*N*L*k/n;
+assert(mod(Num,1)==0, 'Generated number not a integer');
+
 while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
     % everytime we need a N*L bit in interleaver, so    %
     % we should generate 2*N*L / (n/k) bits             %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    Num = 2*N*L*k/n;
-    if mod(Num,1) ~= 0
-        warning('Num has problem')
-    end
     bn = bit_generator(Num);
 
 %     [xR, xI] = Transmitter(bn, L, N, n, type);
@@ -52,24 +53,23 @@ while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dn = Encoder(bn, n, type);
     
-    [xpR, xpI] = QPSK_constellation_mapper(dn);
-    xp = v2_mergetworeal(xpR,xpI);
-    
-    x = interleaver(xp, L, N);
+    xp = interleaver(dn, L, N);
+
+    [xR, xI] = QPSK_constellation_mapper(xp);
+    x = v2_mergetworeal(xR,xI);
 
     [y, h_R] = channel(x, snr, N);
 
     % y here is still complex(with noise)
     y_afterfilter = v2_channel_estimator(y, h_R, N);
     
-    yp_temp = deinterleaver(y_afterfilter, L, N);
+    [y_afterfilterR, y_afterfilterI] = v2_backtoreal(y_afterfilter);
     
-    % because QPSK_demapper could only read real sequence
-    % so we need to seperate complex into two real for it
-    yp = v2_backtoreal(yp_temp);
+    yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
     
-    dnhat = QPSK_constellation_demapper(yp);
-    bnhat = Hamming74_decoder(dnhat);
+    dnhat = deinterleaver(yp, L, N);
+
+    bnhat = Decoder(dnhat, n, type);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     assert(length(bn) == length(bnhat),...
@@ -83,7 +83,7 @@ while error_count_symbol <= 300
 end
 % who can see both original bit and receiver can tell the probabilty of
 % error (symbol error)
-n_total_bit = n_run*N*L;
+n_total_bit = n_run*Num;
 pe_symbol = error_count_symbol / n_total_bit;
 pe_bit = error_count_bit / (n_total_bit*n);
 

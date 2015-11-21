@@ -1,6 +1,6 @@
 function [ y_afterfilter ] = matched_filter(y, h, N)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% implement matched filter %
+% implement matched filter  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Input(y):         row vector, 1 by N*L, complex
