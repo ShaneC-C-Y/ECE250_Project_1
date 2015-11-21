@@ -34,9 +34,6 @@ function [pe_symbol, pe_bit, n_total_bit] = System(snr, L, n, k, type)
 % with divide sequence by 7
 N = 42;      
 
-% sigma_w^2 = 1/SNR 
-sigma_w = sqrt(1/snr);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % genertor                          %
 % everytime generate one set of bit %
@@ -47,7 +44,7 @@ sigma_w = sqrt(1/snr);
 error_count_symbol = 0;
 error_count_bit = 0;
 n_run = 0;
-while error_count_symbol <= 100
+while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
     % everytime we need a N*L bit in interleaver, so    %
@@ -61,8 +58,8 @@ while error_count_symbol <= 100
 
     [xR, xI] = Transmitter(bn, L, N, n, type);
 
-    [y_R, h_R] = channel(xR, sigma_w, N);
-    [y_I, h_I] = channel(xI, sigma_w, N);
+    [y_R, h_R] = channel(xR, snr, N);
+    [y_I, h_I] = channel(xI, snr, N);
 
     [bnhat, dnhat] = Receiver(y_R, y_I, h_R, h_I, L, N, n, type);
 

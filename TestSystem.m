@@ -18,22 +18,17 @@
 %   the input variables to System are for the tests above   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% maybe we should not specify Num here
-% just use while until there is enough error, i.e. 100
-% Num = 1e+05;
-
-n_simulation = 10;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SNR simulation point                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+n_simulation = 200;
 SNRrange = [10 100];
 SNR = linspace(SNRrange(1),SNRrange(2),n_simulation);
 
-pe_symbol = zeros(1,n_simulation);
-pe_theoretical_symbol = zeros(1, n_simulation);
-pe_bit = zeros(1,n_simulation);
-pe_theoretical_bit = zeros(1,n_simulation);
-n_total_bit = zeros(1, n_simulation);
-
-% L should satsify 
-%   L >= n, when using length n codeword
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% L should satsify                      %
+%   L >= n, when using length n codeword%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Hamming74:        n = 7
 % L = 7;
 % n = 7;
@@ -44,36 +39,48 @@ L = 2;
 n = 2;
 k = 1;
 
-    for i = 1 : n_simulation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% initialize                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+pe_symbol = zeros(1,n_simulation);
+pe_theoretical_symbol = zeros(1, n_simulation);
+pe_bit = zeros(1,n_simulation);
+pe_theoretical_bit = zeros(1,n_simulation);
+n_total_bit = zeros(1, n_simulation);
+
+pe_bit_3 = zeros(1,n_simulation);
+
+%     for i = 1 : n_simulation
 %         type = 'hamming74';
-        type = 'repetition';
-        %%%%%%%%%%
-        % take out Num
-        %%%%%%%%%%%
-        [pe_symbol(i), pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
-%         pe_theoretical_symbol(i) = ?
+%         type = 'repetition';
+
+%         [~, pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
+%         [~, pe_bit_3(i), ~] = System(SNR(i), 3, 3, k, type);
+
+        %         pe_theoretical_symbol(i) = ?
         % for hamming74 at high SNR region
-        pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
+%         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
         % for repetition n=2
 %         pe_theoretical_symbol(i) = 4/SNR(i)^L;
-    end
+%         pe_theoretical_symbol(i) = 2*(4/SNR(i)^L)-(4/SNR(i)^L)^2;
 
-h1 = plot(SNR,pe_symbol, 'o', SNR,pe_bit, '*', SNR,pe_theoretical_symbol);
-% h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
-legend('simulation', 'simulation, bit error', 'theoritical');
-% legend('simulation', 'theoritical');
+%     end
+    
+[a,b,c]=System(100, 3, 3, k, 'repetition')
 
-set(h1, 'linewidth', 2);
-% legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
-xlabel('SNR');
-ylabel('probability of error');
 
-%%%%%%%%%%%%%%
-% if we want to know how may Num we run
-% System should tell us at output
-%%%%%%%%%%%%%
-title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d',...
-    n, n_total_bit(n_simulation)));
+% h1 = plot(SNR,pe_bit, SNR, pe_bit_3, SNR,pe_theoretical_symbol);
+% % h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
+% legend('simulation, L = 2', 'simulation, L = 3', 'theoritical');
+% % legend('simulation', 'theoritical');
+% 
+% set(h1, 'linewidth', 2);
+% % legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
+% xlabel('SNR');
+% ylabel('probability of error');
+% 
+% title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d',...
+%     n, n_total_bit(n_simulation)));
 
 % figure(2);
 % h2 = plot(SNR,pe_theoretical);
