@@ -37,14 +37,15 @@ error_count_bit = 0;
 n_run = 0;
 
 % put here because the error rate caculator outside while loop need
-Num = 2*N*L*k/n;
+Num = N*L/(n/k)*2;
 assert(mod(Num,1)==0, 'Generated number not a integer');
 
 while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
-    % everytime we need a N*L bit in interleaver, so    %
-    % we should generate 2*N*L / (n/k) bits             %
+    % everytime we need a 2*N*L bit in interleaver due  %
+    % to QPSK will take 2 bit once                      %
+    % we should generate N*L/(n/k)*2 bits               %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bn = bit_generator(Num);
 
@@ -53,7 +54,7 @@ while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dn = Encoder(bn, n, type);
     
-    xp = interleaver(dn, L, N);
+    xp = interleaver(dn, L, N*2);
 
     [xR, xI] = QPSK_constellation_mapper(xp);
     x = v2_mergetworeal(xR,xI);
@@ -67,7 +68,7 @@ while error_count_symbol <= 300
     
     yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
     
-    dnhat = deinterleaver(yp, L, N);
+    dnhat = deinterleaver(yp, L, N*2);
 
     bnhat = Decoder(dnhat, n, type);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
