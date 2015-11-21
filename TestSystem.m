@@ -50,11 +50,11 @@ n_total_bit = zeros(1, n_simulation);
 
 pe_bit_3 = zeros(1,n_simulation);
 
-%     for i = 1 : n_simulation
+    for i = 1 : n_simulation
 %         type = 'hamming74';
-%         type = 'repetition';
+        type = 'repetition';
 
-%         [~, pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
+        [~, pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
 %         [~, pe_bit_3(i), ~] = System(SNR(i), 3, 3, k, type);
 
         %         pe_theoretical_symbol(i) = ?
@@ -62,12 +62,10 @@ pe_bit_3 = zeros(1,n_simulation);
 %         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
         % for repetition n=2
 %         pe_theoretical_symbol(i) = 4/SNR(i)^L;
-%         pe_theoretical_symbol(i) = 2*(4/SNR(i)^L)-(4/SNR(i)^L)^2;
+        pe_theoretical_symbol(i) = 2*(4/SNR(i)^L)-(4/SNR(i)^L)^2;
 
-%     end
+    end
     
-[a,b,c]=System(100, 2, 2, k, 'repetition')
-
 
 % h1 = plot(SNR,pe_bit, SNR, pe_bit_3, SNR,pe_theoretical_symbol);
 % % h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
