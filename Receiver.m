@@ -7,12 +7,9 @@ function [bnhat, dnhat] = Receiver( y_R, y_I, h_R, h_I, L, N, n, type)
 y_afterfilterR = matched_filter(y_R, h_R, N);
 y_afterfilterI = matched_filter(y_I, h_I, N);
 
-ypR = deinterleaver(y_afterfilterR, L, N);
-ypI = deinterleaver(y_afterfilterI, L, N);
+yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
 
-yp = mergesignal(ypR, ypI);
-
-dnhat = QPSK_constellation_demapper(yp);
+dnhat = deinterleaver(yp, L, N);
 
 bnhat = Decoder(dnhat, n, type);
 end

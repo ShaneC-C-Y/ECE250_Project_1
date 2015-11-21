@@ -9,7 +9,7 @@ switch type
     case 'repetition'
         dn = repetition_encoder(bn, n);
     otherwise
-        warning('Unexpected type')
+        error('Unexpected type');
 end
 end
 

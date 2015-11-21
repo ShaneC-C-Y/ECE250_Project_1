@@ -1,11 +1,11 @@
- function [ y,h ] = channel(x1, snr, N)
+ function [ y,h ] = channel(x, snr, N)
 
-% Input(x1):        row vector, length N*L
+% Input(x):         row vector, length N*L
 % Input(sigma, N):  parameter
 % Output(y):        row vector, length N*L, complex
 % OUtput(h):        row vector, length L
 
-% change x1 to N by L matrix
+% change x to N by L matrix
 % N bit in one column, in one Tc
 % [ x[1] x[1+N] ...
 %   x[2] x[2+N] ...
@@ -14,8 +14,8 @@
 %     .     .    .
 %   x[N] x[N+N] ...]
 %
-x = reshape(x1, N, []);
-L = length(x1)/N;
+x_matrix = reshape(x, N, []);
+L = length(x)/N;
 
 % generate H~CN(0,1)
 % total Ns columns, so there are L channel response h in H
@@ -30,7 +30,7 @@ h = mag.*exp(1j*2*pi*rand(L,1));    % H = |H|e^j*unif(0~2pi)
 h_matrix = diag(h);
 
 % signal without noise;
-y_no_noise = x*h_matrix;
+y_no_noise = x_matrix*h_matrix;
 
 % generate AWGN
 % SNR = a^2 / sigma_w^2 

@@ -1,18 +1,18 @@
-function yp = deinterleaver( y_afterfilter, L, N )
+function dnhat = deinterleaver( yp, L, N )
 
-% Input(yp):    row vector, length N*L
+% Input(yp):    row vector, length N*L???
 % Output:       row vector, size the same
-assert(length(y_afterfilter) == N*L);
 
-yp = zeros(size(y_afterfilter));
+yp_matrix = reshape(yp, N*L, 2);
+dnhat = zeros(size(yp_matrix));
 
 for i = 1:L
     for j = 1:N
-        yp(i+ (j-1)*L) = y_afterfilter((i-1)*N+j);
+        dnhat(i+ (j-1)*L, :) = yp_matrix((i-1)*N+j, :);
     end
 end
 
-yp = torowvector(yp);
+dnhat = dnhat(:)';
 
 end
 
