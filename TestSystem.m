@@ -66,7 +66,7 @@ pe_bit_3 = zeros(1,n_simulation);
 
 %     end
     
-[a,b,c]=System(100, 3, 3, k, 'repetition')
+[a,b,c]=System(100, 2, 2, k, 'repetition')
 
 
 % h1 = plot(SNR,pe_bit, SNR, pe_bit_3, SNR,pe_theoretical_symbol);

@@ -39,7 +39,7 @@ y_no_noise = x*h_matrix;
 %       total energy in every time slot is 1
 % w = sigma_w.*exp(1j*2*pi*rand(N,L));% complex
 % but here we can use Matlab function awgn with input snr(dB)
-y = awgn(y_no_noise, 10*log10(snr));
+y = awgn(y_no_noise, 10*log10(snr), 'measured');
 
 % make y and h to a row vector to be output
 y = y(:).';
