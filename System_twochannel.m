@@ -57,7 +57,7 @@ while error_count_symbol <= 300
     [y_R, h_R] = channel(xR, snr, N);
     [y_I, h_I] = channel(xI, snr, N);
 
-    [bnhat, dnhat] = Receiver(y_R, y_I, h_R, h_I, L, N, n, type);
+    [bnhat, dnhat] = Receiver_2(y_R, y_I, h_R, h_I, L, N, n, type);
 
     error_count_symbol = error_count_symbol + length(find(bnhat ~= bn));
     n_run = n_run + 1;

@@ -48,7 +48,7 @@ pe_bit = zeros(1,n_simulation);
 pe_theoretical_bit = zeros(1,n_simulation);
 n_total_bit = zeros(1, n_simulation);
 
-pe_bit_3 = zeros(1,n_simulation);
+% pe_bit_3 = zeros(1,n_simulation);
 
     for i = 1 : n_simulation
 %         type = 'hamming74';
@@ -68,10 +68,10 @@ pe_bit_3 = zeros(1,n_simulation);
     
 
 % h1 = plot(SNR,pe_bit, SNR, pe_bit_3, SNR,pe_theoretical_symbol);
-% % h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
+h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
 % legend('simulation, L = 2', 'simulation, L = 3', 'theoritical');
-% % legend('simulation', 'theoritical');
-% 
+legend('simulation', 'theoritical');
+
 % set(h1, 'linewidth', 2);
 % % legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
 % xlabel('SNR');

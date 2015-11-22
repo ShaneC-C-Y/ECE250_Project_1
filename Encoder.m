@@ -1,7 +1,7 @@
 function [ dn ] = Encoder(bn, n, type)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% need type
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Encoder need type         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch type
     case 'hamming74'

@@ -1,16 +1,14 @@
-function [bnhat, dnhat] = Receiver( y_R, y_I, h_R, h_I, L, N, n, type)
+function [bnhat, dnhat] = Receiver( y, h, L, N, n, type)
 %%%%%%%%%%%%%%%%%
 % receiver      %
 %%%%%%%%%%%%%%%%%
 
 % y_afterfilter are still complex
-y_afterfilterR = matched_filter(y_R, h_R, N);
-y_afterfilterI = matched_filter(y_I, h_I, N);
+y_afterfilter = matched_filter(y, h, N);
 
-% sufficient statistic is Re{y}
-% here also P/S, merge two series together
-yp = QPSK_constellation_demapper(real(y_afterfilterR), real(y_afterfilterI));
-
+% from series to parallels, and back to series
+yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
+    
 dnhat = deinterleaver(yp, L, N*2);
 
 bnhat = Decoder(dnhat, n, type);

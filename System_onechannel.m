@@ -42,22 +42,10 @@ while error_count_symbol <= 300
 
     [xR, xI] = Transmitter(bn, L, N, n, type);
 
-    [y, h_R] = channel(xR + 1i*xI, snr, N);
+    [y, h] = channel(xR + 1i*xI, snr, N);
 
-    % y_afterfilter here is still complex
-    y_afterfilter = matched_filter(y, h_R, N);
+    [bnhat, dnhat] = Receiver(y, h, L, N, n, type);
     
-    % from series to parallels, and back to series
-    yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
-    
-    dnhat = deinterleaver(yp, L, N*2);
-
-    bnhat = Decoder(dnhat, n, type);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    assert(length(bn) == length(bnhat),...
-        'length bn: %d, is different with length bnhat: %d',...
-        length(bn), length(bnhat));
     error_count_symbol = error_count_symbol + length(find(bnhat ~= bn));
     n_run = n_run + 1;
     
