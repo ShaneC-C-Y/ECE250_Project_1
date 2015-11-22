@@ -6,7 +6,7 @@ function [ y_afterfilter ] = matched_filter(y, h, N)
 % Input(y):         row vector, 1 by N*L, complex
 % Input(N):         parameter
 % Input(h):         row vector, 1 bu L, complex
-% OUtput:           row vector, 1 by N*L, real
+% OUtput:           row vector, 1 by N*L, complex
 
 L = length(h);
 assert( length(y) == N*L, 'lenght in matched filter is %d, not %d',...
@@ -27,10 +27,7 @@ h_factor = diag(conj(h)./h_norm);
 % y -> (h*/|h|)y
 y_afterfilter = y*h_factor;
 
-% sufficient statistic is Re{y}
-y_afterfilter = real(y_afterfilter);
-
 % make a row vector to be output
-y_afterfilter = y_afterfilter(:)';
+y_afterfilter = y_afterfilter(:).';
 end
 

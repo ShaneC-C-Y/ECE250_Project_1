@@ -1,8 +1,8 @@
-function [pe_symbol, pe_bit, n_total_bit] = System(snr, L, n, k, type)
+function [pe_symbol, pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Time diversity system                                         %
+% Time diversity system (seperate channel)                      %
 % create:       11/06/2015                                      %
-% last modify:  11/18/2015                                      %
+% last modify:  11/22/2015                                      %
 %                                                               %
 % you can decide                                                %
 %   (1) Hamming (7,4) encoding                                  %
@@ -21,12 +21,6 @@ function [pe_symbol, pe_bit, n_total_bit] = System(snr, L, n, k, type)
 %   path, so there will be two channel                          %
 %   in this system                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% fc = 1.8e+09;
-% W = 10e+03;
-% Ts = 1/W;
-% 
-% Tc = 4.2e-03;
 
 % amount of symbol in one Tc
 % set a number dividable by 2 and 7, choosing 42
@@ -52,8 +46,9 @@ assert(mod(Num,1)==0, 'Generated number not a integer');
 while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
-    % everytime we need a N*L bit in interleaver, so    %
-    % we should generate 2*N*L / (n/k) bits             %
+    % everytime we need a 2*N*L bit in interleaver due  %
+    % to QPSK will take 2 bit once                      %
+    % we should generate N*L/(n/k)*2 bits               %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bn = bit_generator(Num);
 
@@ -75,23 +70,5 @@ end
 n_total_bit = n_run*Num;
 pe_symbol = error_count_symbol / n_total_bit;
 pe_bit = error_count_bit / (n_total_bit*n);
-
-
-%%%%%%%%%%%%%%%
-% fix it later
-%%%%%%%%%%%%%%%
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % repetition                %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% [xR2, xI2] = Transmitter(bn, L, N, n, 'repetition');
-% 
-% [y_R2, h_R2] = channel(xR2, sigma_w, N);
-% [y_I2, h_I2] = channel(xI2, sigma_w, N);
-% 
-% [bnhat2, dnhat2] = Receiver(y_R2, y_I2, h_R2, h_I2, L, N, n, 'repetition');
-% 
-% bn_compare2 = bn(1:length(bnhat2));
-% pe2 = length(find((bnhat2 - bn_compare2)~=0)) / length(bnhat2);
 
 end

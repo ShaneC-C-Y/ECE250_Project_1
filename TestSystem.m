@@ -54,7 +54,7 @@ pe_bit_3 = zeros(1,n_simulation);
 %         type = 'hamming74';
         type = 'repetition';
 
-        [~, pe_bit(i), n_total_bit(i)] = System(SNR(i), L, n, k, type);
+        [~, pe_bit(i), n_total_bit(i)] = System_onechannel(SNR(i), L, n, k, type);
 %         [~, pe_bit_3(i), ~] = System(SNR(i), 3, 3, k, type);
 
         %         pe_theoretical_symbol(i) = ?

@@ -1,23 +1,14 @@
-function [pe_symbol, pe_bit, n_total_bit] = System_onepath(snr, L, n, k, type)
+function [pe_symbol, pe_bit, n_total_bit] = System_onechannel(snr, L, n, k, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Time diversity system                                         %
+% Time diversity system (one channel)                           %
 % create:       11/20/2015                                      %
-% last modify:  11/--/2015                                      %
+% last modify:  11/22/2015                                      %
 %                                                               %
 % note:                                                         %
+%   a copy from System_twochannel and do some modify            %
 %   Real and Imag part on the same path, so there will be only  %
 %   one channel in this system                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%
-% not yet test!!!!!!!!!!!
-%%%%%%%%%%%%%%%
-
-% fc = 1.8e+09;
-% W = 10e+03;
-% Ts = 1/W;
-% 
-% Tc = 4.2e-03;
 
 % amount of symbol in one Tc
 % set a number dividable by 2 and 7, choosing 42
@@ -49,23 +40,15 @@ while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bn = bit_generator(Num);
 
-%     [xR, xI] = Transmitter(bn, L, N, n, type);
+    [xR, xI] = Transmitter(bn, L, N, n, type);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    dn = Encoder(bn, n, type);
-    
-    xp = interleaver(dn, L, N*2);
-    [xR, xI] = QPSK_constellation_mapper(xp);
-    x = v2_mergetworeal(xR,xI);
+    [y, h_R] = channel(xR + 1i*xI, snr, N);
 
-    [y, h_R] = channel(x, snr, N);
-
-    % y here is still complex(with noise)
-    y_afterfilter = v2_channel_estimator(y, h_R, N);
+    % y_afterfilter here is still complex
+    y_afterfilter = matched_filter(y, h_R, N);
     
-    [y_afterfilterR, y_afterfilterI] = v2_backtoreal(y_afterfilter);
-    
-    yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
+    % from series to parallels, and back to series
+    yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
     
     dnhat = deinterleaver(yp, L, N*2);
 
@@ -86,23 +69,5 @@ end
 n_total_bit = n_run*Num;
 pe_symbol = error_count_symbol / n_total_bit;
 pe_bit = error_count_bit / (n_total_bit*n);
-
-
-%%%%%%%%%%%%%%%
-% fix it later
-%%%%%%%%%%%%%%%
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % repetition                %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% [xR2, xI2] = Transmitter(bn, L, N, n, 'repetition');
-% 
-% [y_R2, h_R2] = channel(xR2, sigma_w, N);
-% [y_I2, h_I2] = channel(xI2, sigma_w, N);
-% 
-% [bnhat2, dnhat2] = Receiver(y_R2, y_I2, h_R2, h_I2, L, N, n, 'repetition');
-% 
-% bn_compare2 = bn(1:length(bnhat2));
-% pe2 = length(find((bnhat2 - bn_compare2)~=0)) / length(bnhat2);
 
 end

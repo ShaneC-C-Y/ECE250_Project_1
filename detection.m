@@ -13,7 +13,6 @@ function bit_error_count = detection(dnhat, n, bn)
 %            .     .      .
 %          dn~[n] ... dn~[Num*(n/1)] ]
 % bn =    [bn[1]  ...   bn[Num]  ]
-dnhat = length_handle(dnhat, n);
 dnhat = reshape(dnhat,n,[]);
 
 % check the length, make it comparable

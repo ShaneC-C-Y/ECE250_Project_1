@@ -1,13 +1,15 @@
 function [bnhat, dnhat] = Receiver( y_R, y_I, h_R, h_I, L, N, n, type)
-%%%%%%%%%%%%%%
-% re
-%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%
+% receiver      %
+%%%%%%%%%%%%%%%%%
 
-% yR, yI here is real(with noise)
+% y_afterfilter are still complex
 y_afterfilterR = matched_filter(y_R, h_R, N);
 y_afterfilterI = matched_filter(y_I, h_I, N);
 
-yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
+% sufficient statistic is Re{y}
+% here also P/S, merge two series together
+yp = QPSK_constellation_demapper(real(y_afterfilterR), real(y_afterfilterI));
 
 dnhat = deinterleaver(yp, L, N*2);
 
