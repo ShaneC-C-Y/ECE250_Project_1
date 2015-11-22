@@ -5,7 +5,7 @@ function [xR, xI] = Transmitter(bn, L, N, n, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dn = Encoder(bn, n, type);
 
-xp = interleaver(dn, L, N);
+xp = interleaver(dn, L, N*2);
 
 % xR, xI are real
 [xR, xI] = QPSK_constellation_mapper(xp);

@@ -55,7 +55,6 @@ while error_count_symbol <= 300
     dn = Encoder(bn, n, type);
     
     xp = interleaver(dn, L, N*2);
-
     [xR, xI] = QPSK_constellation_mapper(xp);
     x = v2_mergetworeal(xR,xI);
 

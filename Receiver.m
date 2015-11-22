@@ -9,7 +9,7 @@ y_afterfilterI = matched_filter(y_I, h_I, N);
 
 yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
 
-dnhat = deinterleaver(yp, L, N);
+dnhat = deinterleaver(yp, L, N*2);
 
 bnhat = Decoder(dnhat, n, type);
 end
