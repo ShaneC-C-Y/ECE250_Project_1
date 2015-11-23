@@ -28,13 +28,6 @@ function [pe_symbol, pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type
 % with divide sequence by 7
 N = 42;      
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% genertor                          %
-% everytime generate one set of bit %
-% enough for N*L and should be even %
-% because QPSK need even            %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 error_count_symbol = 0;
 error_count_bit = 0;
 n_run = 0;
