@@ -53,6 +53,5 @@ end
 % probabilty of error
 n_total_bit = n_run*Num - amount_retransmit_bit;
 pe_bit = error_count_bit / (n_total_bit);
-% p_o = (error_count_bit + amount_retransmit_bit*0.5)/ (n_total_bit + amount_retransmit_bit)
 
 end

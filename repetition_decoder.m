@@ -1,4 +1,4 @@
-function [ bnhat, tie_case ] = repetition_decoder( dnhat, n)
+function [ bnhat, retransmit_case ] = repetition_decoder( dnhat, n)
 
 % majority logic decoding
 % dhnat2 = [ dn~[1] ...   ...
@@ -15,6 +15,6 @@ m = sum(dnhat2,1);
 bnhat = m>c;
 
 % if there is the case we need to flip coin, do retransmit
-tie_case =  find(m == c, 2);
+retransmit_case =  find(m == c, 2);
 end
 

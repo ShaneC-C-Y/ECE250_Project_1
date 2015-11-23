@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Test for time diversity system                            %
 % create:       11/06/2015                                  %
-% last modify:  11/18/2015                                  %
+% last modify:  11/23/2015                                  %
 %                                                           %
 % several tests can be done here                            %
 %   (1) Hamming(7,4) encoding                               %
@@ -21,8 +21,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SNR simulation point                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-n_simulation = 200;
-SNRrange = [10 100];
+n_simulation = 50;
+SNRrange = [50 100];
 SNR = linspace(SNRrange(1),SNRrange(2),n_simulation);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,46 +42,35 @@ k = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pe_symbol = zeros(1,n_simulation);
 pe_bit = zeros(1,n_simulation);
-pe_theoretical_bit = zeros(1,n_simulation);
-n_total_bit = zeros(1, n_simulation);
+pe_bit2 = zeros(1,n_simulation);
+pe_theoretical = zeros(1,n_simulation);
+n_total_bit = 0;
 
-% pe_bit_3 = zeros(1,n_simulation);
-
-    for i = 1 : n_simulation
+for i = 1 : n_simulation
 %         type = 'hamming74';
-        type = 'repetition';
+    display(SNR(i));
+    type = 'repetition';
 
-        [~, pe_bit(i), n_total_bit(i)] = System_onechannel(SNR(i), L, n, k, type);
-%         [~, pe_bit_3(i), ~] = System(SNR(i), 3, 3, k, type);
+    [pe_bit(i), ~] = System_onechannel(SNR(i), L, n, k, type);
+    [pe_bit2(i), n_total_bit] = System_twochannel(SNR(i), L, n, k, type);
 
-        % for hamming74 at high SNR region
+    % for hamming74 at high SNR region
 %         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
 
-        % for repetition n=2
-        pe_theoretical_symbol(i) = 4/SNR(i)^L;
-
-    end
+    % for repetition n=2 at high SNR region
+    pe_theoretical(i) = 4/SNR(i)^L;
+end
     
+h1 = plot(SNR, pe_bit,SNR, pe_bit2, SNR, pe_theoretical);
+legend('one channel', 'two channel', 'theoretical value');
 
-% h1 = plot(SNR,pe_bit, SNR, pe_bit_3, SNR,pe_theoretical_symbol);
-h1 = plot(SNR,pe_bit,SNR,pe_theoretical_bit);
-% legend('simulation, L = 2', 'simulation, L = 3', 'theoritical');
-legend('simulation', 'theoritical');
+set(h1, 'linewidth', 2);
+xlabel('SNR');
+ylabel('probability of error');
 
-% set(h1, 'linewidth', 2);
-% % legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
-% xlabel('SNR');
-% ylabel('probability of error');
-% 
-% title(sprintf('Pe using repetition coding n = %d, L = 2, Num = %d',...
-%     n, n_total_bit(n_simulation)));
-
-% figure(2);
-% h2 = plot(SNR,pe_theoretical);
-% legend('L=3', 'L=5', 'L=7', 'L=9', 'L=11');
-% 
+title(sprintf('Pe using repetition coding n = %d, L = 2, totalNum = %d',...
+    n, n_total_bit));
 
 
 

@@ -2,19 +2,12 @@ function [pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time diversity system (seperate channel)                      %
 % create:       11/06/2015                                      %
-% last modify:  11/22/2015                                      %
+% last modify:  11/23/2015                                      %
 %                                                               %
 % you can decide                                                %
 %   (1) Hamming (7,4) encoding                                  %
 %   (2) Repetition(n,1) encoding                                %
-% one of them to run the system                                 % 
-%                                                               %
-% pe_symbol is computed by comparing bn and bnhat (Num bits)    %
-%   (1) it comes out after decoding (make decision)             %
-%   (2) under repetition coding n is even, decision may be      %
-%       wrong                                                   %
-% pe_bit is computed by comparing bn and dnhat (Num*n bits)     %
-%   (1) it works only on repetition coding                      %
+% one of them to run the system                                 %
 %                                                               %
 % note:                                                         %
 %   Real and Imag part on different                             %
@@ -66,6 +59,5 @@ end
 % error (symbol error)
 n_total_bit = n_run*Num - amount_retransmit_bit;
 pe_bit = error_count_bit / (n_total_bit);
-% p_o = (error_count_bit + amount_retransmit_bit*0.5)/ (n_total_bit + amount_retransmit_bit)
 
 end
