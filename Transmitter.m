@@ -7,6 +7,7 @@ dn = Encoder(bn, n, type);
 
 % if use interleaver before QPSK, you should but 2N 
 % due to QPSK will shrink 2 bits to 1 bit
+% but N or N*2 seems the same result
 xp = interleaver(dn, L, N*2);
 
 % xR, xI are real

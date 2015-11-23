@@ -43,7 +43,6 @@ k = 1;
 % initialize                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pe_symbol = zeros(1,n_simulation);
-pe_theoretical_symbol = zeros(1, n_simulation);
 pe_bit = zeros(1,n_simulation);
 pe_theoretical_bit = zeros(1,n_simulation);
 n_total_bit = zeros(1, n_simulation);
@@ -57,12 +56,11 @@ n_total_bit = zeros(1, n_simulation);
         [~, pe_bit(i), n_total_bit(i)] = System_onechannel(SNR(i), L, n, k, type);
 %         [~, pe_bit_3(i), ~] = System(SNR(i), 3, 3, k, type);
 
-        %         pe_theoretical_symbol(i) = ?
         % for hamming74 at high SNR region
 %         pe_theoretical_symbol(i) = (2^4-1)/SNR(i)^3;
+
         % for repetition n=2
-%         pe_theoretical_symbol(i) = 4/SNR(i)^L;
-        pe_theoretical_symbol(i) = 2*(4/SNR(i)^L)-(4/SNR(i)^L)^2;
+        pe_theoretical_symbol(i) = 4/SNR(i)^L;
 
     end
     

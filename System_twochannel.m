@@ -1,4 +1,4 @@
-function [pe_symbol, pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type)
+function [pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time diversity system (seperate channel)                      %
 % create:       11/06/2015                                      %
@@ -28,15 +28,15 @@ function [pe_symbol, pe_bit, n_total_bit] = System_twochannel(snr, L, n, k, type
 % with divide sequence by 7
 N = 42;      
 
-error_count_symbol = 0;
 error_count_bit = 0;
+amount_retransmit_bit = 0;
 n_run = 0;
 
 % put here because the error rate caculator outside while loop need
 Num = 2*N*L*k/n;
 assert(mod(Num,1)==0, 'Generated number not a integer');
 
-while error_count_symbol <= 300
+while error_count_bit <= 500
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
     % everytime we need a 2*N*L bit in interleaver due  %
@@ -50,18 +50,22 @@ while error_count_symbol <= 300
     [y_R, h_R] = channel(xR, snr, N);
     [y_I, h_I] = channel(xI, snr, N);
 
-    [bnhat, dnhat] = Receiver_2(y_R, y_I, h_R, h_I, L, N, n, type);
+    [bnhat, retransmit_case] = Receiver_twochannel(y_R, y_I, h_R, h_I, L, N, n, type);
 
-    error_count_symbol = error_count_symbol + length(find(bnhat ~= bn));
+    % here we don't need to compare tie_case, they will retransmit
+    if ~isempty(retransmit_case)
+        bn(retransmit_case) = [];
+        bnhat(retransmit_case) = [];
+        amount_retransmit_bit = amount_retransmit_bit +...
+            length(retransmit_case);
+    end
+    error_count_bit = error_count_bit + length(find(bnhat ~= bn));
     n_run = n_run + 1;
-    
-    % detection in bit error
-    error_count_bit = error_count_bit + detection(dnhat, n, bn);
 end
 % who can see both original bit and receiver can tell the probabilty of
 % error (symbol error)
-n_total_bit = n_run*Num;
-pe_symbol = error_count_symbol / n_total_bit;
-pe_bit = error_count_bit / (n_total_bit*n);
+n_total_bit = n_run*Num - amount_retransmit_bit;
+pe_bit = error_count_bit / (n_total_bit);
+% p_o = (error_count_bit + amount_retransmit_bit*0.5)/ (n_total_bit + amount_retransmit_bit)
 
 end

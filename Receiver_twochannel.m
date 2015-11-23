@@ -1,4 +1,5 @@
-function [bnhat, dnhat] = Receiver_2( y_R, y_I, h_R, h_I, L, N, n, type)
+function [bnhat, retransmit_case] = Receiver_twochannel( y_R, y_I, h_R,...
+                                                        h_I, L, N, n, type)
 %%%%%%%%%%%%%%%%%
 % receiver      %
 %%%%%%%%%%%%%%%%%
@@ -13,6 +14,6 @@ yp = QPSK_constellation_demapper(real(y_afterfilterR), real(y_afterfilterI));
 
 dnhat = deinterleaver(yp, L, N*2);
 
-bnhat = Decoder(dnhat, n, type);
+[bnhat, retransmit_case] = Decoder(dnhat, n, type);
 end
 

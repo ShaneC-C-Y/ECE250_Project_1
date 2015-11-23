@@ -4,15 +4,14 @@ function [ dn ] = Hamming74_encoder(bn)
 % Output: row vector, length (7/4)*N*L
 %                            this should be an even number
 %                            so N*L should be dividable by 8
-n = 7;
+% n = 7;
 k = 4;
 
 % every 4 bits in a column vector
 % p = [ bn[1] ...   ...
 %         .    .     .
 %       bn[4] ... bn[4*N~] ]
-bn1 = length_handle(bn, k);
-p = reshape(bn1, k, []);
+p = reshape(bn, k, []);
 
 % very inportant to check the version of coding matrix
 %https://en.wikipedia.org/wiki/Hamming(7,4)#Decoding
